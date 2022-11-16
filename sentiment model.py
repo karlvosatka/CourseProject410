@@ -74,8 +74,8 @@ print("Model training finished")
 
 # Save the trained model
 try:
-    model_file = open('saved_model/model.pickle','wb')
-    joblib.dump(model,'saved_model/model20000.pkl')
+    model_file = open('model.pickle','wb')
+    joblib.dump(model,'model.pkl')
     print("trained model saved to /saved_model as model.pkl ")
 except:
     print("failed to save the model")
