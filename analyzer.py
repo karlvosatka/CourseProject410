@@ -58,7 +58,7 @@ except:
     print("failed to create feature map")
 
 # load the pre-trained model
-model = joblib.load('saved_model/model2000.pkl')
+model = joblib.load('model.pkl')
 
 # make prediction
 prediction = model.classify_many(all_feature_map)
