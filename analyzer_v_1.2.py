@@ -2,6 +2,7 @@
 # Created by Rui Mao at 2022-11-29
 # Reference: https://www.nltk.org ;https://www.cs.cornell.edu/people/pabo/movie-review-data/ ;
 # https://medium.com/@joel_34096/sentiment-analysis-of-movie-reviews-in-nltk-python-4af4b76a6f3 ;
+# https://realpython.com/python-nltk-sentiment-analysis/
 # https://joblib.readthedocs.io/en/latest/
 
 
@@ -32,20 +33,22 @@ for review in fetched_reviews:
     res = review.split()
     reviews_list.append(res)
 
+stopwords = nltk.corpus.stopwords.words("english")
+stopwords.extend([word.lower() for word in nltk.corpus.names.words()])
 
 def create_feature_map(review):
     """
     :param review: ['This','is','review','one']
     :return:   feature_map: {'This':False,'is':True,'review':False,'one':True}
     """
-    bigram = nltk.collocations.BigramCollocationFinder.from_words(review)
+    bigram = nltk.collocations.BigramCollocationFinder.from_words(word for word in review if word not in stopwords)
 
     feature_map = {}
     for feature in features:
         label = feature in bigram.ngram_fd # label is either True or False
         feature_map[feature] = label
     return feature_map
-#
+
 print("Creating feature map, this may take some time...")
 
 try:# creating feature map for all reviews
