@@ -12,7 +12,7 @@ import ast
 # Read feature_vector from generated feature_vector.txt
 
 try:
-    with open("saved_features/MNB_Bigram_features.txt","r") as feature_file:
+    with open("MNB_Bigram_features.txt","r") as feature_file:
         content = feature_file.read().splitlines()
 except:
     print("Can't find the file.")
@@ -58,7 +58,7 @@ except:
     print("Failed to create feature map")
 
 
-model = joblib.load('saved_model/MultinomialNB.pkl')
+model = joblib.load('MultinomialNB.pkl')
 
 # make prediction
 prediction = model.classify_many(all_feature_map)
