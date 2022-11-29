@@ -1,5 +1,7 @@
+import sys
 import requests
 import json
+import re
 from bs4 import BeautifulSoup
 
 def letterboxd_scrape(url):
@@ -14,76 +16,37 @@ def letterboxd_scrape(url):
     item = {}
 
     title = soup.find('meta', {'property': 'og:title'}).get('content')
-    #cast = [cast.text for cast in soup.find_all('a', {'class': 'text-slug tooltip'})]
-    #directors = [directors.text for directors in soup.find_all('span', {'class': 'prettify'})]
     rating = soup.find('meta', {'name': 'twitter:data2'}).get('content')
-    #genres = soup.find('div', {'class': 'text-sluglist capitalize'})
-    #genres = [genres.text for genres in genres.find_all('a', {'class': 'text-slug'})]
-    #producers = soup.find_all('div', {'class': 'text-sluglist'})[2]
-    #producers = [producers.text for producers in producers.find_all('a')]
-    #writers = soup.find_all('div', {'class': 'text-sluglist'})[3]
-    #writers = [writers.text for writers in writers.find_all('a')]
     year = soup.find('small', {'class': 'number'}).text
 
     item['title'] = title
     item['release year'] = year
-    #item['director(s)'] = directors
-    #item['cast'] = cast
     item['rating'] = rating
-    #item['genres'] = genres
-    #item['producer(s)'] = producers
-    #item['writer(s)'] = writers
 
 
     movie = url.split('/')[-2]
 
-    """
-    r = requests.get(f'https://letterboxd.com/esi/film/{movie}/stats/', headers=headers)
-
-    soup = BeautifulSoup(r.content, 'lxml')
-
-
-    watched_by = soup.find('a', {'class': 'has-icon icon-watched icon-16 tooltip'}).text
-    listed_by = soup.find('a', {'class': 'has-icon icon-list icon-16 tooltip'}).text
-    liked_by = soup.find('a', {'class': 'has-icon icon-like icon-liked icon-16 tooltip'}).text
-
-    item['watched by'] = watched_by
-    item['listed by'] = listed_by
-    item['liked by'] = liked_by """
-
     r = requests.get(f'https://letterboxd.com/film/{movie}/reviews/by/activity/', headers=headers)
 
     soup = BeautifulSoup(r.content, 'lxml')
-
-    """ 
-    NAIVE VERSION -- FASTER, WILL NOT SCRAPE LARGER REVIEWS
-    
-    i = 2
-    all_reviews = []
-    while(i < 6):
-
-        #grab reviews for current page
-        pop_reviews = soup.find_all('li', {'class': 'film-detail'})
-        
-        pop_reviews = [pr.text for pr in soup.find_all('div', {'class': 'body-text -prose collapsible-text'})]
-        all_reviews.append(pop_reviews)
-
-        #set up next page
-        r = requests.get(f'https://letterboxd.com/film/{movie}/reviews/by/activity/page/{i}/', headers=headers)
-        soup = BeautifulSoup(r.content, 'lxml')
-        i += 1
-
-    item['popular reviews'] = all_reviews """
     
     #grab full review links
     full_rev_links = [("https://letterboxd.com" + link.get('data-full-text-url')) for link in soup.find_all('div', {'class': 'body-text -prose collapsible-text'})]
-    #print(full_revs_links)
+
+    #find score for each review. if not given, set as -1
+    review_scores = []
+    review_scores_data = soup.find_all('div', {'class': 'attribution-block'})
+    for j in range(len(review_scores_data)):
+        score_data = review_scores_data[j].find('span')['class']
+        if 'rating' in score_data:
+            review_scores.append(int(score_data[2][6:]))
+        else:
+            review_scores.append(-1)
     
-    rev_texts = []
     #parse full review links
+    rev_texts = []
     i = 2
     while (i < 6):
-        #TODO - ability to scrape the actual rating of the review for pre-training and later general reference
 
         for link in full_rev_links:
             r = requests.get(link, headers=headers)
@@ -92,14 +55,47 @@ def letterboxd_scrape(url):
             rev_texts.append(rev)
         r = requests.get(f'https://letterboxd.com/film/{movie}/reviews/by/activity/page/{i}/', headers=headers)
         soup = BeautifulSoup(r.content, 'lxml')
-        full_rev_links = [("https://letterboxd.com" + link.get('data-full-text-url')) for link in soup.find_all('div', {'class': 'body-text -prose collapsible-text'})]
+        full_rev_links = [('https://letterboxd.com' + link.get('data-full-text-url')) for link in soup.find_all('div', {'class': 'body-text -prose collapsible-text'})]
+
+        #pull review scores for each review
+        review_scores_data = soup.find_all('div', {'class': 'attribution-block'})
+        for j in range(len(review_scores_data)):
+            score_data = review_scores_data[j].find('span')['class']
+            if 'rating' in score_data:
+                review_scores.append(int(score_data[2][6:]))
+            else:
+                review_scores.append(-1)
+        
         i += 1
 
-    #TODO - add review pre-processing to the scraper itself!
+    #average review according to kaggle dataset is 6.488350645011941, so we consider pos as >= 6.5, neg as < 6.5. account for not given scores
+    review_binary = ['not given' if s == -1 else 'neg' if s < 6.5 else 'pos' for s in review_scores]
+
+    
+    for i in range(len(rev_texts)):
+        #remove all characters besides letters
+        rev_texts[i] = re.sub(r'[^\w]', ' ', rev_texts[i])
+
+        #make all chars lowercase
+        rev_texts[i] = rev_texts[i].lower()
 
     item['popular reviews'] = rev_texts
+    item['popular review scores'] = review_scores
+    item['popular review score binary'] = review_binary
     
+    #create json file with all data
     with open(f'{movie}.json', 'w') as f:
         json.dump(item, f,  indent=2)
 
-letterboxd_scrape('https://letterboxd.com/film/the-matrix/')
+    #create text file with just full text reviews
+    with open(f'{movie}.txt', 'w') as fp:
+        for item in rev_texts:
+            fp.write("%s\n" % item)
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: %s letterboxd_url", file=sys.stderr)
+    elif sys.argv[1].find("https://letterboxed.com/film/") == None:
+        print("Error: Incorrect URL format", file=sys.stderr)
+    else:
+        letterboxd_scrape(sys.argv[1])
