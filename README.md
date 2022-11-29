@@ -1,5 +1,5 @@
 # CS410 Project: Letterboxd Sentiment Analyzer
 
-Dependencies:
-Natural Language Toolkit (NLTK, https://www.nltk.org/data.html)
-BeautifulSoup4
+Dependencies:\n
+Natural Language Toolkit (NLTK, https://www.nltk.org/data.html)\n
+BeautifulSoup4\n
