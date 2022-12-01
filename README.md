@@ -4,5 +4,5 @@ Dependencies:
 Natural Language Toolkit (NLTK, https://www.nltk.org/data.html)  
 BeautifulSoup4  
 LXML, the HTML Parser  
-sklearn  
+Scikit-Learn   
 
