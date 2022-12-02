@@ -49,6 +49,8 @@ def analyzer(threshold):
     except:
         print("fetching movie data, please wait")
 
+    movie_title = movie_data["title"]
+    overall_rating = movie_data["rating"]
     fetched_reviews = movie_data["reviews"]
     rating_sentiment = movie_data["rating sentiment"]
     review_score_sentiments = movie_data["review sentiments"]
@@ -120,9 +122,10 @@ def analyzer(threshold):
     total_neg = vader_neg_counter + bi_neg_counter
     total = total_neg + total_pos
 
+    #check accuracy per review by comparing per-review model results to review score sentiment indication as compared to average for letterboxd.com
     if len(analyzer_sentiments) != len(review_score_sentiments):
         print("Error: mismatch in reviews")
-        accuracy_per_review = 0
+        accuracy_per_review = -1
     else:
         matching_score = 0
         matching_total = 0
@@ -135,31 +138,34 @@ def analyzer(threshold):
                 matching_total += 1
         accuracy_per_review = matching_score / matching_total
 
+    #compare overall sentiment of model to average user rating score for movie
     if total_pos > total_neg:
         overall_sentiment = "pos"
     else:
         overall_sentiment = "neg"
     overall_accuracy = overall_sentiment == rating_sentiment
 
-    print("Finish Sentiment Analysis.")
-    print("Total Analyzed Reviews:", total + neu,
+    with open(f'{sys.argv[1]}.txt', 'w') as f:
+        print("Movie: ", movie_title, file=f)
+        print("Average User Rating", overall_rating, file=f)
+        print("Total Analyzed Reviews:", total + neu,
           "Positive Reviews:", total_pos,
-          "Negative Reviews:", total_neg, sep='\n')
+          "Negative Reviews:", total_neg, sep='\n', file=f)
 
-    if total_pos > total_neg:
-        print("Overall: Positive")
-    else:
-        print("Overall: Negative")
+        if total_pos > total_neg:
+            print("Overall Sentiment: Positive", file=f)
+        else:
+            print("Overall Sentiment: Negative", file=f)
 
-    print("Max Positive Score:", max_pos_score,
-            "Most Positive Short Reviews: ", most_pos_short_review,
-            "Max Negative Score:", max_neg_score,
-            "Most Negative Short Reviews: ", most_neg_short_review, sep="\n")
-    if overall_accuracy:
-        print("The model accurately predicted the overall user rating")
-    else:
-        print("The model DID NOT accurately predict the average rating")
-    print("Per-Review Accuracy:", accuracy_per_review, sep="\n")
+        print("Max Positive Score:", max_pos_score,
+                "Most Positive Short Reviews: ", most_pos_short_review,
+                "Max Negative Score:", max_neg_score,
+                "Most Negative Short Reviews: ", most_neg_short_review, sep="\n", file=f)
+        if overall_accuracy:
+            print("The model accurately predicted the overall user rating", file=f)
+        else:
+            print("The model DID NOT accurately predict the average rating", file=f)
+        print("Per-Review Accuracy:", accuracy_per_review, sep="\n", file=f)
 
 
 if __name__ == "__main__":
