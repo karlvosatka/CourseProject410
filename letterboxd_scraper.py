@@ -17,9 +17,8 @@ def letterboxd_scrape(url):
 
     title = soup.find('meta', {'property': 'og:title'}).get('content')
     rating = soup.find('meta', {'name': 'twitter:data2'}).get('content')
-    rating_spl = rating.split(" ")
-    rating = float(rating_spl[0])*2
-    if rating > 6.488350645011941:
+    rating = float(rating.split(" ")[0])*2
+    if rating > 6.488350645011941: #derived from Kaggle dataset (https://www.kaggle.com/datasets/samlearner/letterboxd-movie-ratings-data?select=ratings_export.csv)
         rating_sentiment = "pos"
     else:
         rating_sentiment = "neg"
@@ -59,7 +58,7 @@ def letterboxd_scrape(url):
         rev_texts.append(rev)
     
     
-    #repeat for 5 total pages
+    #repeat for 10 total pages
     i = 2
     while (i <= 10):
         #change page

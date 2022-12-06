@@ -49,6 +49,7 @@ def analyzer(threshold):
     except:
         print("fetching movie data, please wait")
 
+    #fetch data from scaper json file
     movie_title = movie_data["title"]
     overall_rating = movie_data["rating"]
     fetched_reviews = movie_data["reviews"]
@@ -57,6 +58,7 @@ def analyzer(threshold):
     reviews_list_indices = []
     analyzer_sentiments = ["init"] * len(fetched_reviews)
 
+    #score short reviews (i.e. less than 200 words) using VADER
     review_counter = 0
     for review in fetched_reviews:
         res = review.split()
@@ -90,7 +92,6 @@ def analyzer(threshold):
         
         review_counter += 1
         
-
 
     try:  # creating feature map for all reviews
         all_feature_map = []
@@ -145,6 +146,7 @@ def analyzer(threshold):
         overall_sentiment = "neg"
     overall_accuracy = overall_sentiment == rating_sentiment
 
+    #write results to output txt file
     with open(f'{sys.argv[1]}.txt', 'w') as f:
         print("Movie: ", movie_title, file=f)
         print("Average User Rating", overall_rating, file=f)
