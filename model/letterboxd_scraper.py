@@ -106,7 +106,7 @@ def letterboxd_scrape(url):
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: %s letterboxd_url", file=sys.stderr)
-    elif sys.argv[1].find("https://letterboxd.com/film/") == None:
+    elif sys.argv[1].find("https://letterboxd.com/film/") == -1:
         print("Error: Incorrect URL format", file=sys.stderr)
     else:
         letterboxd_scrape(sys.argv[1])
