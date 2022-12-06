@@ -14,6 +14,7 @@ public class ProgramRunner extends Thread {
     private int programsIndex;
     private String args;
     private String os;
+    private String fileName;
 
 
     // Use this constructor if you are trying to run one of the trading analysis programs such as the spread grouper
@@ -25,6 +26,7 @@ public class ProgramRunner extends Thread {
         programsIndex = 0;
         os = System.getProperty("os.name");
         args = "";
+        fileName = url.split("/")[4];
     }
 
     public void setArgs(String newArgs)
@@ -63,11 +65,12 @@ public class ProgramRunner extends Thread {
 
 
         if (os.contains("Mac"))
-            program = new ProcessBuilder("python3", "analysis.py", url+".txt");
+            program = new ProcessBuilder("python3", "analyzer_1.4.py", fileName+".json");
         else
-            program = new ProcessBuilder("python", "analysis.py", url+".txt");
+            program = new ProcessBuilder("python", "analyzer_1.4.py", fileName+".json");
 
-        program.directory(new File(parDur + "/sentiment_analysis_model"));
+//        program.directory(new File(parDur + "/sentiment_analysis_model"));
+        program.directory(new File(parDur));
         program.inheritIO(); // <-- passes IO from forked process.
         try {
             Process p = program.start(); // <-- forkAndExec on Unix
