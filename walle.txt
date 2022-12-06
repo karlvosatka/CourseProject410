@@ -1,0 +1,20 @@
+Movie:  WALL·E (2008)
+Average User Rating 8.28
+Total Analyzed Reviews:
+120
+Positive Reviews:
+76
+Negative Reviews:
+33
+Overall Sentiment: Positive
+Max Positive Score:
+1.0
+Most Positive Short Reviews: 
+yes
+Max Negative Score:
+0.404
+Most Negative Short Reviews: 
+yeah the queen died boo hoo so sad wall e criterion lezzzzz gooooooooooo
+The model accurately predicted the overall user rating
+Per-Review Accuracy:
+0.6952380952380952
