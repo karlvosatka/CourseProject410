@@ -17,12 +17,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Handler;
+import java.io.FileReader;
 
 public class JavaFXTemplate extends Application {
 
@@ -103,7 +105,10 @@ public class JavaFXTemplate extends Application {
 			((Button) e.getSource()).setDisable(true);
 			runThread = new ProgramRunner(url.getText(), signal->{
 				Platform.runLater(()->{
-					primaryStage.setScene(scenes.get(signal));
+					if(signal.equals("Results"))
+						primaryStage.setScene(buildResultsScreen(primaryStage));
+					else
+						primaryStage.setScene(scenes.get(signal));
 				});
 			});
 			runThread.start();
@@ -155,6 +160,73 @@ public class JavaFXTemplate extends Application {
 		contents.getChildren().addAll(waitPrompt);
 
 		return new Scene(contents, 700, 700);
+	}
+
+	public Scene buildResultsScreen(Stage primaryStage)
+	{
+		try {
+			File workingDur = new File(System.getProperty("user.dir"));
+			String parDur = workingDur.getParent();
+			BufferedReader br = new BufferedReader(new FileReader(parDur+"/model/" + runThread.getFileName() + ".txt"));
+
+
+
+			BorderPane borderPane = new BorderPane();
+			borderPane.setPadding(new Insets(20));
+
+
+
+			// middle
+			VBox center = new VBox(12);
+			center.setAlignment(Pos.CENTER);
+
+			Label title = new Label("Results");
+			title.setStyle("-fx-font-size: 45");
+			title.setBackground(
+					new Background(new BackgroundFill(secondaryColor.color, new CornerRadii(0), new Insets(-7))));
+
+
+
+			center.getChildren().addAll(title);
+
+			String line;
+
+			while ((line = br.readLine()) != null) {
+				Label temp = new Label(line);
+				temp.setStyle("-fx-font-size: 12");
+				temp.setBackground(
+						new Background(new BackgroundFill(secondaryColor.color, new CornerRadii(0), new Insets(0))));
+				center.getChildren().add(temp);
+			}
+
+
+
+			Button back = new Button("Back");
+			back.setStyle("-fx-font-size: 30; -fx-border-color: black; -fx-background-color: salmon");
+			back.setOnAction(e->{
+				primaryStage.setScene(scenes.get("Start"));
+			});
+
+
+			back.setOnMouseEntered(e -> back.setStyle("-fx-font-size: 30; -fx-border-color: black; -fx-background-color: green"));
+			back.setOnMouseExited(e -> back.setStyle("-fx-font-size: 30; -fx-border-color: black; -fx-background-color: salmon"));
+
+			center.getChildren().add(back);
+
+			borderPane.setCenter(center);
+
+			borderPane.setStyle(
+					"-fx-background-color: " + primaryColor.colorName + "; -fx-border-width: 10; -fx-border-color: "
+							+ secondaryColor.colorName + "; -fx-font-family: " + font);
+
+			return new Scene(borderPane, 700, 700);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+
 	}
 
 }

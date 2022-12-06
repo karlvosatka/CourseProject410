@@ -28,12 +28,10 @@ public class ProgramRunner extends Thread {
         args = "";
         fileName = url.split("/")[4];
     }
-
-    public void setArgs(String newArgs)
+    
+    public String getFileName()
     {
-        synchronized (args) {
-            args = newArgs;
-        }
+        return fileName;
     }
 
     public void run()
@@ -54,7 +52,7 @@ public class ProgramRunner extends Thread {
         else
             program = new ProcessBuilder("python", "letterboxd_scraper.py", url);
 
-        program.directory(new File(parDur));
+        program.directory(new File(parDur+"/model"));
         program.inheritIO(); // <-- passes IO from forked process.
         try {
             Process p = program.start(); // <-- forkAndExec on Unix
@@ -65,12 +63,12 @@ public class ProgramRunner extends Thread {
 
 
         if (os.contains("Mac"))
-            program = new ProcessBuilder("python3", "analyzer_1.4.py", fileName+".json");
+            program = new ProcessBuilder("python3", "analyzer_1.4.py", fileName);
         else
-            program = new ProcessBuilder("python", "analyzer_1.4.py", fileName+".json");
+            program = new ProcessBuilder("python", "analyzer_1.4.py", fileName);
 
 //        program.directory(new File(parDur + "/sentiment_analysis_model"));
-        program.directory(new File(parDur));
+        program.directory(new File(parDur+"/model"));
         program.inheritIO(); // <-- passes IO from forked process.
         try {
             Process p = program.start(); // <-- forkAndExec on Unix
