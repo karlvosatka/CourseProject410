@@ -2,7 +2,7 @@
 # Sentiment Analysis of Letterboxd Movies
 The **Sentiment Analysis of Letterboxd** tool assesses the sentiment of 120 or so of the most popular reviews on Letterboxd.com. Through a GUI interface, users can provide the link to the main page of a film of interest on letterboxd.com. The program then employs various sentiment analysis tools from the NLTK toolkit, including a unique trained model, to calculate the sentiment of each review and provide an overall assessment based on the average sentiment across the reviews. The sentiment analysis results are also compared to the rating for each review and of the film as a whole as a measure of accuracy, where a rating is considered positive if its rating is above the average sitewide rating for a film, and negative if below.
 
-# Video Demo
+## Video Demo
 
 **[Watch Presentation Here](https://drive.google.com/file/d/1GS4v6SozYyYePNSruSn5qZXpTLSxUiZK/view?usp=share_link)** 
 
