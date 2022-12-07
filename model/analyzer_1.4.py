@@ -1,7 +1,10 @@
 # Description: Function used to running sentiment analysis for new reviews
 # Created by Rui Mao at 2022-11-29
-# Reference: https://www.nltk.org ;https://www.cs.cornell.edu/people/pabo/movie-review-data/ ;
+# Modified by Karl Vosatka: (Add accuracy function, support JSON, finallize output)
+# Reference and code snippets from below links:
+# https://www.nltk.org ;https://www.cs.cornell.edu/people/pabo/movie-review-data/ ;
 # https://medium.com/@joel_34096/sentiment-analysis-of-movie-reviews-in-nltk-python-4af4b76a6f3 ;
+# https://realpython.com/python-nltk-sentiment-analysis/
 # https://joblib.readthedocs.io/en/latest/
 
 import sys
