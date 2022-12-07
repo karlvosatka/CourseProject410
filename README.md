@@ -2,6 +2,8 @@
 # Sentiment Analysis of Letterboxd Movies
 The **Sentiment Analysis of Letterboxd** tool assesses the sentiment of 120 or so of the most popular reviews on Letterboxd.com. Through a GUI interface, users can provide the link to the main page of a film of interest on letterboxd.com. The program then employs various sentiment analysis tools from the NLTK toolkit, including a unique trained model, to calculate the sentiment of each review and provide an overall assessment based on the average sentiment across the reviews. The sentiment analysis results are also compared to the rating for each review and of the film as a whole as a measure of accuracy, where a rating is considered positive if its rating is above the average sitewide rating for a film, and negative if below.
 
+**[Watch Presentation Here](https://drive.google.com/file/d/1GS4v6SozYyYePNSruSn5qZXpTLSxUiZK/view?usp=share_link)** 
+
 ## Related Work
 
  Used Libraries/Models:
@@ -52,7 +54,7 @@ The backend thread uses the Consumer object callback to send messages to the GUI
  - BeautifulSoup4, a tool for extracting useful data from HTML-coded
    text, version 4.11.1 
    - Installed via the `pip install beautifulsoup4` command 
-   - More detailed instructions are available **[here](https://www.tutorialspoint.com/beautiful_soup/beautiful_soup_installation.htm)** 
+   - More detailed instructions are available **[here](https://www.tutorialspoint.com/beautiful_soup/beautiful_soup_installation.html)** 
   - Lxml, an html parser needed for running BeautifulSoup, version 4.8.0 
 	  - Installed via the `pip install lxml` command 
 	  - More detailed instructions are available **[here](https://lxml.de/installation.html)** 
